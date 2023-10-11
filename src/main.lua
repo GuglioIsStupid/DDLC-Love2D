@@ -3,15 +3,25 @@ function love.load()
     Ease = require "modules.Ease"
     Timer = require "lib.Timer"
     require "modules.loveOverrides"
+    require "modules.helpers"
+    require "modules.persistent"
+    loadPersistent()
     --require "modules.TrueColour"
 
     mainFont = love.graphics.newFont("fonts/gui/Aller_Rg.ttf", 24)
+    nameFont = love.graphics.newFont("fonts/gui/RifficFree-Bold.ttf", 24)
     love.graphics.setFont(mainFont)
 
+    -- States
     splashScreen = require "states.splash"
     mainMenu = require "states.mainMenu"
 
+    -- Substates
+    nameDialog = require "substates.name_dialog"
+
     bgm = love.audio.newSource("audio/bgm/1.ogg", "stream")
+    hoverSound = love.audio.newSource("audio/gui/sfx/hover.ogg", "static")
+    selectSound = love.audio.newSource("audio/gui/sfx/select.ogg", "static")
     love.audio.play(bgm, function(audio)
         audio:seek(22.073)
         love.audio.play(audio, true, "bgm", false)
@@ -36,6 +46,34 @@ function love.update(dt)
     state.update(dt)
 end
 
+function love.mousepressed(x, y, button)
+    state.mousepressed(x, y, button)
+end
+
+function love.keypressed(key)
+    state.keypressed(key)
+end
+
+function love.textinput(text)
+    state.textinput(text)
+end
+
+function love.resize(w, h)
+end
+
 function love.draw()
     state.draw()
+
+    -- print debug info
+    love.graphics.setColor(0,0,0)
+    love.graphics.print("FPS: " .. love.timer.getFPS() ..
+        "\nDraws: " .. love.graphics.getStats().drawcalls ..
+        "\nMemory: " .. math.floor(collectgarbage("count")) .. "KB" ..
+        "\nGraphics Memory (MB): " .. math.floor(love.graphics.getStats().texturememory / 1024 / 1024), 0, 0, 0, 0.5, 0.5
+    )
+
+end
+
+function love.quit()
+    savePersistent()
 end

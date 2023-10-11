@@ -34,7 +34,7 @@ local substate = nil -- Current substate
 local function nop() end -- Called when there is no function to call from the current state
 
 local function switch(newstate, ...) -- (local) Switches to a new state/substate, returns the new state
-    if current and current.leave then current:leave() end
+    if current and current.exit then current:exit() end
     last = current
     current = newstate
     if current.enter then current:enter(...) end
@@ -49,7 +49,11 @@ end
 
 function state.current() return current end -- Returns the current state
 function state.last() return last end -- Returns the last state
-function state.killSubstate() substate = nil end -- Kills the current substate, returns nothing
+function state.killSubstate(...) -- Kills the current substate and calls current:substateReturn, returns nothing
+    if substate and substate.exit then substate:exit() end
+    substate = nil
+    current:substateReturn(...)
+end 
 function state.currentSubstate() return substate end -- Returns the current substate
 
 function state.returnToLast() -- Returns to the last state, returns the new state

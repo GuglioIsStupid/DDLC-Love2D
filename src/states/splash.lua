@@ -5,6 +5,7 @@ function splash:enter()
     self.logo = love.graphics.newImage("images/bg/splash.png")
     self.alpha = 0
     self.timer = 0
+    curSplash = 1
 
     self.events = {
         ["0.5"] = function()
@@ -17,10 +18,10 @@ function splash:enter()
             curSplash = 2
             self.alpha = Ease.linear(self.timer - 3.25, 0, 1, 0.5)
         end,
-        ["7"] = function()
+        ["6.45"] = function()
             self.alpha = Ease.linear(self.timer - 7, 1, -1, 0.5)
         end,
-        ["7.45"] = function()
+        ["7.25"] = function()
             state.switch(mainMenu)
         end
     }
@@ -33,12 +34,12 @@ function splash:update(dt)
         self.events["0.5"]()
     elseif self.timer > 2.75 and self.timer < 3.25 then
         self.events["2.75"]()
-    elseif self.timer > 3.25 and self.timer < 7 then
+    elseif self.timer > 3.25 and self.timer < 6 then
         self.events["3.25"]()
-    elseif self.timer > 7 and self.timer < 7.45 then
-        self.events["7"]()
-    elseif self.timer > 7.45 then
-        self.events["7.45"]()
+    elseif self.timer > 6.45 and self.timer < 7.25 then
+        self.events["6.45"]()
+    elseif self.timer > 7.25 then
+        self.events["7.25"]()
     end
 end
 

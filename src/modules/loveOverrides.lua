@@ -86,7 +86,7 @@ function love.graphics.draw(image, x, y, r, sx, sy, ox, oy, kx, ky)
 end
 
 function love.graphics.newFont(path, size)
-    return _newFont("assets/" .. path, size)
+    return type(path) == "string" and _newFont("assets/" .. path, size) or _newFont(path)
 end
 
 function love.audio.newSource(path, type)

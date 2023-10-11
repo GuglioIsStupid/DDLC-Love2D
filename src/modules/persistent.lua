@@ -1,0 +1,2 @@
+persistent = {}
+persistent.playername = nil
