@@ -60,16 +60,18 @@ function mainMenu:enter()
 
     self.textButtons = {
         TextButton("New Game", function()
-            if not persistent.playername then state.substate(nameDialog) end
+            if not persistent.playername then state.substate(nameDialog) 
+            else state.switch(gameState) end
+            sayers.mc = persistent.playername
         end),
         TextButton("Load Game", function()
-            state.switch(splashScreen)
+            --state.switch(splashScreen)
         end),
         TextButton("Settings", function()
-            state.switch(splashScreen)
+            --state.switch(splashScreen)
         end),
         TextButton("Help", function()
-            state.switch(splashScreen)
+            --state.switch(splashScreen)
         end),
         TextButton("Quit", function()
             love.event.quit()
@@ -122,7 +124,10 @@ function mainMenu:mousepressed(x, y, button)
 end
 
 function mainMenu:substateReturn(name)
-    persistent.playername = name
+    if name then 
+        persistent.playername = name
+        state.switch(gameState)
+    end
 end
 
 function mainMenu:draw()

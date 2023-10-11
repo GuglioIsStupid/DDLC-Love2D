@@ -38,6 +38,7 @@ local function switch(newstate, ...) -- (local) Switches to a new state/substate
     last = current
     current = newstate
     if current.enter then current:enter(...) end
+    return current
 end
 
 function state.switch(newstate, ...) -- Switches to a new state, returns the new state
@@ -53,6 +54,7 @@ function state.killSubstate(...) -- Kills the current substate and calls current
     if substate and substate.exit then substate:exit() end
     substate = nil
     current:substateReturn(...)
+    return
 end 
 function state.currentSubstate() return substate end -- Returns the current substate
 
@@ -70,7 +72,7 @@ function state.substate(newstate, ...) -- Switches to a new substate, returns th
     return substate
 end
 
-function new()
+function new() -- Creates a new state, returns a table, simply used for nicer syntax
     return setmetatable({}, {})
 end
 

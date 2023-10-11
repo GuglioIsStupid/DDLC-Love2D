@@ -1,3 +1,4 @@
+__canQuit = false
 function love.load()
     state = require "modules.state"
     Ease = require "modules.Ease"
@@ -6,6 +7,9 @@ function love.load()
     require "modules.helpers"
     require "modules.persistent"
     loadPersistent()
+    require "modules.definitions"
+    require "modules.dialogue"
+    settings = require "modules.settings"
     --require "modules.TrueColour"
 
     mainFont = love.graphics.newFont("fonts/gui/Aller_Rg.ttf", 24)
@@ -15,9 +19,16 @@ function love.load()
     -- States
     splashScreen = require "states.splash"
     mainMenu = require "states.mainMenu"
+    gameState = require "states.game"
+
+    -- scripts
+    ch0 = require "scripts.script-ch0" -- chapter 0
+
+    chapter = 0
 
     -- Substates
     nameDialog = require "substates.name_dialog"
+    quitDialog = require "substates.quit_dialog"
 
     bgm = love.audio.newSource("audio/bgm/1.ogg", "stream")
     hoverSound = love.audio.newSource("audio/gui/sfx/hover.ogg", "static")
@@ -76,4 +87,11 @@ end
 
 function love.quit()
     savePersistent()
+    
+    if __canQuit then
+        return false
+    else
+        state.substate(quitDialog)
+        return true
+    end
 end

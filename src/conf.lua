@@ -5,5 +5,5 @@ function love.conf(t)
     t.window.height = 720
 
     t.window.icon = "assets/gui/window_icon.png"
-    t.window.resizable = true
+    t.window.resizable = false
 end

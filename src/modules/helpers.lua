@@ -154,6 +154,47 @@ function Text(text)
     return t
 end
 
+-- DialogueText, has value for limit (same code as Text), if limit is 0, then set to default (love.graphics.getWidth())
+function DialogueText(text, limit)
+    local t = {}
+    t.x, t.y = 0, 0
+    t.text = text
+    t.inner = {1,1,1}
+    t.outer = {0,0,0}
+    t.width = 0
+    t.height = 0
+    t.font = nameFont
+    t.thickness = 3
+    t.limit = limit or love.graphics.getWidth()
+    t.align = "left"
+
+    t.update = function(self, dt)
+        self.width = self.font:getWidth(self.text) * 1.15
+        self.height = self.font:getHeight() * 1.15
+    end
+
+    t.draw = function(self)
+        if self.text == "" then return end
+        local lastFont = love.graphics.getFont()
+        love.graphics.setFont(self.font)
+        if self.thickness > 0 then
+            for i = -self.thickness, self.thickness do
+                for j = -self.thickness, self.thickness do
+                    love.graphics.setColor(self.outer)
+                    love.graphics.printf(self.text, self.x + i, self.y + j, self.limit, t.align)
+                end
+            end
+        end
+        love.graphics.setColor(self.inner)
+        love.graphics.printf(self.text, self.x, self.y, self.limit, t.align)
+
+        love.graphics.setColor(1,1,1)
+        love.graphics.setFont(lastFont)
+    end
+
+    return t
+end
+
 function savePersistent()
     -- save the persistent table into persistent file, no library
 
