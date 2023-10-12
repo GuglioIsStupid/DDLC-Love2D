@@ -8,7 +8,7 @@ function dialog:enter()
     end)
     self.okDialog.x = love.graphics.getWidth() / 2 - self.okDialog.width / 2 - 20
     self.okDialog.y = love.graphics.getHeight() / 2 - self.okDialog.height / 2 + 57
-    self.name = "asdasd"
+    self.name = ""
     self.blinkerAlpha = 0
     self.blinkerColor = {190/255,93/255,158/255}
     self.enterName = Text("Please enter your name")
@@ -44,6 +44,7 @@ end
 function dialog:mousepressed(x, y, button)
     if button == 1 then
         if self.okDialog.hover and self.name ~= "" then
+            persistent.playername = self.name
             self.okDialog.action()
             selectSound:clone():play()
         end

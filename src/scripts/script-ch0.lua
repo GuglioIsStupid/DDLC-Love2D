@@ -1,8 +1,11 @@
 local ch0 = {}
 
 function ch0:updateDialogue(cl)
-    --print("ch0:updateDialogue("..cl..")")
     if cl == 1 then
+        stopMusic(2)
+        scene("residential_day", "dissolve_scene_full")
+        playMusic("t2", 2)
+        if stopDialogue then return end
         sayers["s"] = "???"
         say("s", "Heeeeeeeyyy!!")
     elseif cl == 2 then
@@ -27,6 +30,11 @@ function ch0:updateDialogue(cl)
         say("s", "But I caught you this time!")
     elseif cl == 11 then
         say("mc", "Maybe, but only because I decided to stop and wait for you.")
+    elseif cl == 12 then
+        show("sayori", "5c", {zorder = 0, at = "s11"})
+        say("s", "Eeehhhhh, you say that like you were thinking about ignoring me!")
+    elseif cl == 13 then
+        say("s", "That's mean, " .. player)
     end
 end
 

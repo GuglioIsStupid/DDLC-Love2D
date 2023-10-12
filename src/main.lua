@@ -37,6 +37,7 @@ function love.load()
         audio:seek(22.073)
         love.audio.play(audio, true, "bgm", false)
     end, "bgm", false)
+    bgmVolume = 1
 
     if not love.filesystem.getInfo("characters") then
         love.filesystem.createDirectory("characters")
@@ -48,13 +49,15 @@ function love.load()
         end
     end
 
-    state.switch(mainMenu)
+    state.switch(splashScreen)
 end
 
 function love.update(dt)
     Timer.update(dt)
     love.audio.update(dt)
     state.update(dt)
+
+    bgm:setVolume(bgmVolume)
 end
 
 function love.mousepressed(x, y, button)
@@ -73,6 +76,8 @@ function love.resize(w, h)
 end
 
 function love.draw()
+    --love.graphics.scale(0.5, 0.5)
+    --love.graphics.translate(love.graphics.getWidth()/2, love.graphics.getWidth()/4)
     state.draw()
 
     -- print debug info
@@ -82,7 +87,6 @@ function love.draw()
         "\nMemory: " .. math.floor(collectgarbage("count")) .. "KB" ..
         "\nGraphics Memory (MB): " .. math.floor(love.graphics.getStats().texturememory / 1024 / 1024), 0, 0, 0, 0.5, 0.5
     )
-
 end
 
 function love.quit()
