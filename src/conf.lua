@@ -6,4 +6,6 @@ function love.conf(t)
 
     t.window.icon = "assets/gui/window_icon.png"
     t.window.resizable = false
+
+    t.console = true
 end

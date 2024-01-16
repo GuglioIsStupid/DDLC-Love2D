@@ -32,6 +32,10 @@ end
 function say(sayer_, dialogue, outfit) -- say line
     sayer.text = sayers[sayer_] or sayer_
     NewText = dialogue
+    -- if [player] is in the dialogue, replace it with the player's name
+    if NewText:find("%[player%]") then
+        NewText = NewText:gsub("%[player%]", persistent.playername)
+    end
 
     curChar = 1
     curCharacter = ""

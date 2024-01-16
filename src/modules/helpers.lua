@@ -235,7 +235,10 @@ function Gradient(dir, ...)
 end
 
 function savePersistent()
-    -- save the persistent table into persistent file, no library
+    persistent.sname = sayers["s"]
+    persistent.mname = sayers["m"]
+    persistent.nname = sayers["n"]
+    persistent.yname = sayers["y"]
 
     local persistentString = ""
 
@@ -251,8 +254,6 @@ function savePersistent()
 end
 
 function loadPersistent()
-    -- load the persistent file into persistent table, no library
-
     if not love.filesystem.getInfo("persistent") then
         print("No persistent data found.")
         return false

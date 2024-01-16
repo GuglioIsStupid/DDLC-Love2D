@@ -16,6 +16,7 @@ local outfits = {
 
 local bgs = {}
 bgs["residential_day"] = love.graphics.newImage("images/bg/residential.png")
+bgs["class_day"] = love.graphics.newImage("images/bg/class.png")
 bg = nil
 
 ---------------- Sayori ----------------
@@ -149,6 +150,15 @@ outfits.sayori["4m"] = {s__4Left, s__4Right, s__mHead}
 outfits.sayori["4n"] = {s__4Left, s__4Right, s__nHead}
 outfits.sayori["4o"] = {s__4Left, s__4Right, s__oHead}
 outfits.sayori["4p"] = {s__4Left, s__4Right, s__pHead}
+outfits.sayori["4q"] = {s__4Left, s__4Right, s__qHead}
+outfits.sayori["4r"] = {s__4Left, s__4Right, s__rHead}
+outfits.sayori["4s"] = {s__4Left, s__4Right, s__sHead}
+outfits.sayori["4t"] = {s__4Left, s__4Right, s__tHead}
+outfits.sayori["4u"] = {s__4Left, s__4Right, s__uHead}
+outfits.sayori["4v"] = {s__4Left, s__4Right, s__vHead}
+outfits.sayori["4w"] = {s__4Left, s__4Right, s__wHead}
+outfits.sayori["4x"] = {s__4Left, s__4Right, s__xHead}
+outfits.sayori["4y"] = {s__4Left, s__4Right, s__yHead}
 
 outfits.sayori["5"] = {s_5}
 outfits.sayori["5a"] = {s_5a}
@@ -216,6 +226,58 @@ local ats = {
     ["s11"] = function(width)
         return love.graphics.getWidth()/2, 30
     end,
+
+    ["thide"] = function(width)
+        return -width, 0
+    end,
+
+    -- instants
+    ["i11"] = function(width)
+        return love.graphics.getWidth()/2, 0
+    end,
+    ["i21"] = function(width)
+        return love.graphics.getWidth()/4, 0
+    end,
+    ["i22"] = function(width)
+        return love.graphics.getWidth()/4*3, 0
+    end,
+    ["i31"] = function(width)
+        return love.graphics.getWidth()/6, 0
+    end,
+    ["i32"] = function(width)
+        return love.graphics.getWidth()/2, 0
+    end,
+    ["i31"] = function(width)
+        return love.graphics.getWidth()/6*5, 0
+    end,
+
+    ["ihide"] = function(width)
+        return -width, 0
+    end,
+
+    -- fly in from left
+    ["l11"] = function(width)
+        return love.graphics.getWidth()/2, 0
+    end,
+    ["l21"] = function(width)
+        return love.graphics.getWidth()/4, 0
+    end,
+    ["l22"] = function(width)
+        return love.graphics.getWidth()/4*3, 0
+    end,
+    ["l31"] = function(width)
+        return love.graphics.getWidth()/6, 0
+    end,
+    ["l32"] = function(width)
+        return love.graphics.getWidth()/2, 0
+    end,
+    ["l31"] = function(width)
+        return love.graphics.getWidth()/6*5, 0
+    end,
+
+    ["lhide"] = function(width)
+        return -width, 0
+    end,
 }
 
 function show(who, outfit, settings)
@@ -240,7 +302,24 @@ function show(who, outfit, settings)
         x = charsOnScreen[who].x
         curScale = charsOnScreen[who].scale
         zorder = charsOnScreen[who].zorder
-        at = charsOnScreen[who].at
+    end
+    local hideFound = false
+    -- is hide in settings.at?
+    if at:find("hide") then
+        hideFound = true
+    end
+    local isInstant = false -- starts with i
+    if at:sub(1, 1) == "i" then
+        isInstant = true
+    end
+    local isLeft = false -- starts with l
+    if at:sub(1, 1) == "l" then
+        isLeft = true
+    end
+    local y = outfits[who][outfit][1]:getHeight() * scale
+    if charsOnScreen[who] then
+        x = charsOnScreen[who].x
+        y = charsOnScreen[who].y
     end
     charsOnScreen[who] = {
         who = who,
@@ -248,36 +327,52 @@ function show(who, outfit, settings)
         outfitName = outfit,
         zorder = zorder,
         at = at,
-        x = x,
-        y = 0 + outfits[who][outfit][1]:getHeight() * scale,
+        x = isLeft and -outfits[who][outfit][1]:getWidth() * scale or x,
+        y = y,
         scale = curScale,
         -- no need to adjust position with scale changes
         offsetX = outfits[who][outfit][1]:getWidth()/2, 
         offsetY = outfits[who][outfit][1]:getHeight(),
-        alpha = alpha,
+        alpha = alpha
     }
-    Timer.tween(
-        0.125, 
-        charsOnScreen[who], 
-        {
-            alpha = 1, 
-            scale = scale,
-            x = newX,
-        }, 
-        "linear"
-    )
-    Timer.tween(
-        0.25,
-        charsOnScreen[who],
-        {
-            y = newY + outfits[who][outfit][1]:getHeight() * scale
-        },
-        "out-quad"
-    )
+    if not isInstant then
+        Timer.tween(
+            (hideFound and 0.25) or (isLeft and 0.25) or (0.125),
+            charsOnScreen[who], 
+            {
+                alpha = 1, 
+                scale = scale,
+                x = newX,
+            }, 
+            "linear",
+            function()
+                if settings.callback then settings.callback() end
+                charsOnScreen[who].x = newX
+                charsOnScreen[who].y = newY + outfits[who][outfit][1]:getHeight() * scale
+            end
+        )
+        Timer.tween(
+            0.25,
+            charsOnScreen[who],
+            {
+                y = newY + outfits[who][outfit][1]:getHeight() * scale
+            },
+            "out-quad"
+        )
+    else
+        charsOnScreen[who].alpha = 1
+        charsOnScreen[who].scale = scale
+        charsOnScreen[who].x = newX
+        charsOnScreen[who].y = newY + outfits[who][outfit][1]:getHeight() * scale
+    end
 
     table.sort(charsOnScreen, function(a, b)
         return a.zorder < b.zorder
     end)
+end
+
+function hide(who)
+    charsOnScreen[who] = nil
 end
 
 function Gradient(dir, ...)
@@ -319,13 +414,28 @@ function Gradient(dir, ...)
     return love.graphics.newMesh(meshData, "strip", "static")
 end
 
+local function createWipeleftGradient()
+    -- alpha 0 left, alpha 1 right
+    --is love.graphics.getWidth()*2
+
+    local meshData = {}
+    for i = 1, 100 do
+        local x = (i - 1) / (100 - 1)
+        meshData[#meshData + 1] = {x, 0, x, 0, 0, 0, 0, 0}
+        meshData[#meshData + 1] = {x, 1, x, 1, 0, 0, 0, 0}
+    end
+    return love.graphics.newMesh(meshData, "strip", "static")
+end
+
 stopDialogue = false
 
 function scene(scene, transition)
+    bgTransitionType = "transition"
     if transition == "dissolve_scene_full" then
         stopDialogue = true
         bgTransition = bgs[scene]
         bgTransitionAlpha = 0
+        bgTransitionAsset = nil
         Timer.after(1, function()
             Timer.tween(
                 1,
@@ -341,12 +451,33 @@ function scene(scene, transition)
                 end
             )
         end)
+    --[[ elseif transition == "wipeleft_scene" then
+        stopDialogue = true
+        bgTransition = bgs[scene]
+        bgTransitionX = 0
+        bgTransitionY = 0
+        bgTransitionAsset = createWipeleftGradient()
+        Timer.after(1, function()
+            Timer.tween(
+                1,
+                _G,
+                {bgTransitionX = -love.graphics.getWidth()},
+                "linear",
+                function()
+                    bg = bgs[scene]
+                    bgTransition = nil
+                    stopDialogue = false
+                    print("done")
+                    mousepressedDialogue(20, 20, 1)
+                end
+            )
+        end) ]]
     else
         bg = bgs[scene]
     end
 end
 
-function stopMusic(time)
+function stopMusic(time, callback)
     Timer.tween(
         time,
         _G,
@@ -354,11 +485,12 @@ function stopMusic(time)
         "linear",
         function()
             bgm:stop()
+            if callback then callback() end
         end
     )
 end
 
-function playMusic(music, delay)
+function playMusic(music, delay, callback)
     bgmVolume = 1
     Timer.after(delay or 0, function()
         local bgm = audio[music]

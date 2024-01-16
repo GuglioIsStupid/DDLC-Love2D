@@ -41,7 +41,11 @@ function game:draw()
                 love.graphics.setColor(1,1,1)
             end
         end
-        
+    end
+
+    if bgTransitionAsset then
+        love.graphics.setColor(1,1,1, bgTransitionAlpha)
+        love.graphics.draw(bgTransitionAsset, bgTransitionX, bgTransitionY, 0, 1280*2, 720)
     end
     drawDialogue()
 end
